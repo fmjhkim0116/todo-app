@@ -1,0 +1,861 @@
+<title>위클리 버킷 패스포트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg-start: #f8fafc;
+    --bg-end: #e0f2fe;
+    --accent: #0ea5e9;
+    --accent-contrast: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --card-bg: rgba(255, 255, 255, 0.72);
+    --card-border: rgba(255, 255, 255, 0.6);
+    --surface-2: rgba(226, 232, 240, 0.55);
+    --border: #e2e8f0;
+    --danger: #dc2626;
+    --danger-soft: #fee2e2;
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 20px 40px -22px rgba(15, 23, 42, 0.22);
+    --shadow-hover: 0 1px 2px rgba(15, 23, 42, 0.06), 0 30px 56px -22px rgba(15, 23, 42, 0.3);
+    --radius: 20px;
+    --space: 24px;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Pretendard', -apple-system, 'Noto Sans KR', sans-serif;
+    padding-inline: 16px;
+    padding-block: 32px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--space); }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .wrap > * { animation: fadeInUp 0.5s ease both; }
+    .wrap > *:nth-child(1) { animation-delay: 0s; }
+    .wrap > *:nth-child(2) { animation-delay: 0.06s; }
+    .wrap > *:nth-child(3) { animation-delay: 0.12s; }
+    .wrap > *:nth-child(n+4) { animation-delay: 0.16s; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  .cover {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: var(--text);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    box-shadow: var(--shadow);
+    position: relative;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .cover:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+  .cover-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 6px;
+  }
+  .cover h1 {
+    font-size: clamp(1.4rem, 4.5vw, 1.85rem);
+    font-weight: 700;
+    margin: 0 0 6px;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  .cover p.sub {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: var(--space);
+  }
+  .progress-track {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  .progress-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .week-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--radius);
+    padding: var(--space);
+    box-shadow: var(--shadow);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .week-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+  .week-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .week-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .week-number {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .cat-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface-2);
+    color: var(--accent);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .week-item {
+    font-size: clamp(1.05rem, 3.5vw, 1.3rem);
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 16px 0 var(--space);
+    text-wrap: balance;
+  }
+  .week-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    padding: 9px 16px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-contrast);
+  }
+  .btn.primary.done {
+    background: var(--surface-2);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .btn.ghost {
+    background: transparent;
+  }
+
+  .settings-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    flex-wrap: wrap;
+    margin-top: var(--space);
+  }
+  .settings-row input[type="date"] {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 8px;
+    background: #ffffff;
+    color: var(--text);
+  }
+  .settings-row input[type="date"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .jumpnav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 2;
+    padding-block: 6px;
+  }
+  .jumpnav a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    text-decoration: none;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 5px 11px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .jumpnav a:hover, .jumpnav a:focus-visible { background: var(--accent); color: var(--accent-contrast); outline: none; }
+
+  .page-section {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .page-section:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .page-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+  .page-letter {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .page-head h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0;
+  }
+  .page-count {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.76rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  ul.item-list { list-style: none; margin: 0; padding: 0; }
+  .item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .item-row:last-child { border-bottom: none; }
+  .stamp-check {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1.5px dashed var(--muted);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    cursor: pointer;
+    margin-top: 1px;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+  .stamp-check:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .stamp-check svg { width: 13px; height: 13px; }
+  .item-row.done .stamp-check {
+    border-style: solid;
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+  .item-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    flex-shrink: 0;
+    margin-top: 3px;
+    width: 28px;
+  }
+  .item-text {
+    flex: 1;
+    font-size: 0.94rem;
+    line-height: 1.5;
+  }
+  .item-row.done .item-text {
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+
+  footer.note {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    padding-block: 8px 20px;
+  }
+
+  @media (max-width: 420px) {
+    body { padding-inline: 12px; }
+    .item-row { padding-inline: 14px; }
+    .page-head { padding-inline: 14px; }
+  }
+</style>
+
+<div class="wrap">
+  <div class="cover">
+    <p class="cover-eyebrow">Weekly Bucket Passport</p>
+    <h1>우리 부부의 위클리 버킷 패스포트</h1>
+    <p class="sub">16주 주기로 나들이·집콕·운동·문화·요리·스페셜·영화·공연·음악·음식·숙소·자연휴양림·역사문학·국내여행·해외여행·독서까지 돌아가며, 매주 하나씩 도장을 찍어갑니다.</p>
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="progress-count" id="progressCount">0 / 100</span>
+    </div>
+  </div>
+
+  <div class="week-card">
+    <div class="week-card-top">
+      <div>
+        <div class="week-label">이번 주 스탬프</div>
+        <div class="week-number" id="weekNumber">1주차</div>
+      </div>
+      <span class="cat-tag" id="weekCatTag">A · 근교 나들이</span>
+    </div>
+    <p class="week-item" id="weekItemText">—</p>
+    <div class="week-actions">
+      <button class="btn primary" id="weekDoneBtn" type="button">이번 주 완료로 표시</button>
+      <button class="btn ghost" id="weekRerollBtn" type="button">같은 주제로 다른 항목</button>
+    </div>
+    <div class="settings-row" style="margin-top:14px;">
+      <span>시작일</span>
+      <input type="date" id="startDateInput" aria-label="시작일" />
+      <span>기준으로 주차를 계산합니다</span>
+    </div>
+  </div>
+
+  <nav class="jumpnav" id="jumpnav"></nav>
+
+  <div id="sections"></div>
+
+  <footer class="note">체크와 시작일은 이 브라우저에만 저장됩니다.</footer>
+</div>
+
+<script>
+(function () {
+  var CATEGORIES = [
+    { key: 'A', name: '근교 당일 나들이', items: [
+      '남한산성 성곽길 걷고 정상 수어장대까지 왕복',
+      '양평 두물머리에서 물안개 보고 근처 카페 들르기',
+      '가평 아침고요수목원 계절 꽃 구경',
+      '파주 헤이리 예술마을 갤러리 투어',
+      '인천 소래포구에서 젓갈 구경하고 회 먹기',
+      '강화도 전등사 + 강화 나들길 한 구간 걷기',
+      '수원 화성 성곽 둘레길 완주 (약 5.7km)',
+      '춘천 남이섬 자전거 타기',
+      '속초 설악산 케이블카 타고 권금성 다녀오기',
+      '여주 신륵사 강변 산책',
+      '이천 도자기마을에서 그릇 구경하고 하나씩 사기',
+      '포천 아트밸리 채석장 전망대',
+      '용인 한국민속촌 전통문화 체험',
+      '부여 백제문화단지 + 궁남지 연꽃 산책',
+      '공주 공산성 야경 산책',
+      '대전 계룡산 동학사 코스 등산',
+      '청주 상당산성 둘레길',
+      '태안 신두리 해안사구 걷기',
+      '서산 마애삼존불 보고 근처 게국지 맛보기',
+      '논산 탑정호 출렁다리',
+      '전주 한옥마을 한복 입고 사진 찍기',
+      '군산 근대문화거리 + 이성당 빵 사기',
+      '목포 유달산 노을 보기',
+      '담양 관방제림 벚나무길',
+      '광주 무등산 국립공원 산책로',
+      '대구 앞산 케이블카',
+      '경주 보문호 자전거 라이딩',
+      '안동 월영교 야간 조명 산책',
+      '포항 호미곶 해맞이광장',
+      '울산 대왕암공원 출렁다리',
+      '창원 주남저수지 철새 관찰',
+      '거창 항노화힐링랜드',
+      '서울 근교: 북한산 둘레길 한 구간',
+      '서울 근교: 남산 성곽길 야경 걷기',
+      '서울 근교: 서울숲 + 성수동 카페거리'
+    ]},
+    { key: 'B', name: '집콕 데이트', items: [
+      '넷플릭스·왓챠 다큐멘터리 한 편 보고 감상 30분 이야기 나누기',
+      '부루마불·모노폴리 보드게임 대결',
+      '루미큐브·우노 카드게임 토너먼트 (연간 승점 기록하기)',
+      '젠가 대결하며 진 사람이 설거지하기 내기',
+      '홈 와인바: 와인 한 병 + 치즈플레이트 차려놓고 대화',
+      '홈 막걸리 시음회: 지역별 막걸리 3종 비교 시음',
+      '서로에게 배우고 싶은 것 하나씩 가르쳐주는 미니 클래스 데이',
+      '예전 사진첩·앨범 꺼내서 연도별로 정리하며 추억 이야기',
+      '결혼 초기에 좋아했던 노래 플레이리스트 만들어서 같이 듣기',
+      '손편지 써서 서로 우편함에 넣어두고 다음날 읽기',
+      '홈 스파 데이: 반신욕 + 마사지 오일로 서로 어깨 마사지해주기',
+      '홈 베이킹: 쿠키나 마들렌 같이 굽기',
+      '좋아하는 배우·감독 정해서 그 사람 작품 3편 몰아보기 시리즈',
+      '서로에게 올해 고마웠던 일 3가지 말해주는 밤',
+      '집에서 캠핑 무드 만들기 (텐트 치고 랜턴 켜고 라면 끓여먹기)',
+      '홈트레이닝 유튜브 따라하며 커플 운동',
+      '별자리 앱 켜고 베란다·옥상에서 별 보기',
+      '처음 사귈 때 개봉했던 영화 다시 보기',
+      '서로의 버킷리스트 노트에 새 항목 추가하고 브레인스토밍하는 밤',
+      '향초 켜고 음악 틀고 휴대폰 없이 2시간 대화하는 노폰 나이트',
+      '퍼즐 1000피스 정해서 몇 주에 걸쳐 완성하기 프로젝트 시작',
+      '홈 영화관: 팝콘 튀기고 커튼 치고 프로젝터로 영화 감상',
+      '부부 심리테스트·애착유형 테스트 같이 하고 결과 이야기하기',
+      '5년 전 오늘 뭐 하고 있었는지 회상하는 밤',
+      '캘리그라피 세트 사서 서로에게 짧은 문구 써주기'
+    ]},
+    { key: 'C', name: '운동·건강 데이트', items: [
+      '동네 하천변(안양천, 탄천 등) 저녁 산책 코스 정해서 걷기',
+      '수영장 등록해서 주 1회 같이 다니기',
+      '배드민턴 라켓 사서 동네 체육공원에서 한 게임',
+      '탁구장 가서 부부 대결',
+      '볼링장 데이트, 스트라이크 내기 걸기',
+      '등산화 맞추고 근처 낮은 산(관악산 자락길 등) 정복',
+      '자전거 대여해서 한강공원 라이딩',
+      '요가 매트 사서 유튜브 커플 요가 루틴 따라하기',
+      '골프 연습장(스크린골프 or 실외 연습장) 정기 방문',
+      '필라테스 커플 프로그램 등록',
+      '걷기 앱 켜고 매주 목표 걸음 수 정해서 서로 응원하기',
+      '아침 요가+스트레칭 20분 루틴을 주 1회부터 시작하기',
+      '클라이밍장 체험 등록',
+      '테니스 레슨 받아보기',
+      '국궁(활쏘기) 체험장 가보기',
+      '승마 체험 하러 목장 방문'
+    ]},
+    { key: 'D', name: '문화·취미 체험', items: [
+      '동네 소극장에서 하는 연극·뮤지컬 관람',
+      '재즈바 or 라이브클럽 가서 즉흥 공연 감상',
+      '독립서점 순회하며 낯선 장르 책 한 권씩 골라 교환해서 읽기',
+      '동네 도서관 회원가입하고 매주 책 한 권씩 빌려서 서로 추천하기',
+      '미술관·갤러리 특별전 관람 (국립현대미술관, 예술의전당 등)',
+      '플리마켓·아트마켓 구경하며 소품 하나씩 사기',
+      '방탈출 카페 도전',
+      '보드게임 카페 가서 새로운 게임 배우기',
+      '사진전·전시회 관람 후 각자 마음에 든 작품 하나씩 고르기',
+      '동네 소품샵·편집숍 탐방',
+      '재래시장에서 옛날 물건 구경하며 추억 이야기',
+      '라디오 공개방송이나 팟캐스트 녹화 방청',
+      '지역 문화센터 특강(역사, 미술사 등) 신청해서 같이 듣기',
+      '천체 관측 프로그램(천문대) 참여'
+    ]},
+    { key: 'E', name: '요리·미식 데이트', items: [
+      '매주 다른 나라 요리 하나씩 정해서 홈쿠킹 (이번 주는 태국, 다음 주는 멕시코 식으로)',
+      '동네 새로 생긴 식당 도장깨기 (한 달에 4곳 목표)',
+      '전통시장에서 장 봐서 그날 저녁 반찬 3가지 같이 만들기',
+      '홈메이드 피자 만들어서 토핑 배틀',
+      '디저트 카페 투어 (마카롱, 크로플, 인절미토스트 등 테마별로)',
+      '홈파티: 둘만의 코스요리 차려서 먹기',
+      '전통주 소믈리에 원데이클래스 등록',
+      '커피 원두 갈아서 핸드드립 내려마시는 주말 아침 루틴 만들기',
+      '김장, 장 담그기 같은 계절 음식 직접 만들어보기',
+      '매달 마지막 주는 이달의 맛집 정해서 서프라이즈로 데려가기 (번갈아 준비)'
+    ]},
+    { key: 'F', name: '특별한 순간들', items: [
+      '성수동 대림창고·어니언 같은 핫플 카페 투어 + 요즘 뜨는 팝업스토어 구경',
+      '을지로 힙지로 골목 뉴트로 술집 투어',
+      '아르떼뮤지엄(여수·강릉·제주) 몰입형 미디어아트 전시 관람',
+      '제주 빛의 벙커 몰입형 미디어아트 감상',
+      '오마카세 레스토랑 예약해서 특별한 저녁',
+      '내추럴 와인바에서 낯선 와인 탐험하는 밤',
+      '프라이빗 요트·세일링 투어로 바다 위에서 노을 감상',
+      '담양·전주 열기구 투어로 하늘에서 풍경 내려다보기',
+      '헬리콥터 투어로 서울 야경 내려다보기',
+      '북촌·전주 한옥 스테이 부티크 호텔 1박',
+      '럭셔리 글램핑장 예약해서 하룻밤 캠핑',
+      '프라이빗 셰프 홈다이닝(출장 셰프 코스요리) 예약',
+      '사운드 힐링·명상 리트릿 프로그램 참여',
+      '조용한 산사 프리미엄 템플스테이 1박',
+      '루프탑 바에서 서울 야경 보며 칵테일 한 잔',
+      '제주 오션뷰 풀빌라 스테이케이션',
+      '남해 스카이워크 + 요즘 뜨는 신상 카페거리 투어',
+      '강릉 안목해변 신상 베이커리 카페 도장깨기',
+      '부산 흰여울문화마을 근처 신상 오션뷰 카페 투어',
+      '미쉐린 가이드 등재 레스토랑에서 와인 페어링 코스'
+    ]},
+    { key: 'G', name: '봐야 할 영화', items: [
+      '<시네마 천국> - 극장과 사랑에 대한 헌사',
+      '<비포 선라이즈> 3부작 몰아보기 (선라이즈·선셋·미드나잇)',
+      '<8월의 크리스마스> - 허진호 감독의 담백한 멜로',
+      '<봄날은 간다> - 유지태·이영애 주연 멜로 명작',
+      '<노트북> - 오래된 사랑의 클래식',
+      '<기생충> - 봉준호 감독 아카데미 수상작',
+      '<올드보이> - 박찬욱 감독 대표작',
+      '<화양연화> - 왕가위 감독, 인생 최고의 순간',
+      '<라라랜드> - 뮤지컬 영화의 정수',
+      '<어바웃 타임> - 시간여행 로맨스',
+      '<인생은 아름다워> - 눈물의 명작',
+      '<카사블랑카> - 흑백 고전 명작',
+      '<미나리> - 이민 가족 이야기, 윤여정 아카데미 수상',
+      '<클래식> - 손예진·조승우 첫사랑 이야기',
+      '<아멜리에> - 프랑스 감성 영화',
+      '<워낭소리> - 다큐멘터리로 삶을 돌아보기'
+    ]},
+    { key: 'H', name: '봐야 할 공연', items: [
+      '뮤지컬 <오페라의 유령>',
+      '뮤지컬 <레미제라블>',
+      '뮤지컬 <지킬 앤 하이드>',
+      '뮤지컬 <맘마미아>',
+      '뮤지컬 <시카고>',
+      '뮤지컬 <노트르담 드 파리>',
+      '뮤지컬 <캣츠>',
+      '뮤지컬 <라이온 킹>',
+      '뮤지컬 <위키드>',
+      '창작 뮤지컬 <웃는 남자>',
+      '창작 뮤지컬 <프랑켄슈타인>',
+      '창작 뮤지컬 <명성황후>',
+      '연극 <라이어>',
+      '국립극단·예술의전당 정기공연 아무거나 하나 관람',
+      '판소리 완창 공연 감상'
+    ]},
+    { key: 'I', name: '들어야 할 음악', items: [
+      '이문세 <이문세 4집> 전곡 듣기',
+      '유재하 <사랑하기 때문에> 앨범 전곡',
+      '김광석 다시부르기 앨범',
+      '조용필 히트곡 모음 듣기',
+      '비틀즈 <Abbey Road> 처음부터 끝까지',
+      '퀸 <A Night at the Opera> 전곡 감상',
+      '신승훈 발라드 명곡 모음',
+      '이승철 발라드 명곡 모음',
+      '나윤선 재즈보컬 앨범',
+      '조수미 클래식 명반',
+      '임윤찬 피아노 연주 앨범',
+      '최백호 <낭만에 대하여>',
+      '아이유 발라드 앨범 하나 골라 듣기',
+      '브람스 교향곡 전곡 감상 프로젝트 시작',
+      '라흐마니노프 피아노 협주곡 2번 감상'
+    ]},
+    { key: 'J', name: '지역별 먹어봐야 할 음식', items: [
+      '전주 - 전주비빔밥',
+      '나주 - 나주곰탕',
+      '광주 - 광주 떡갈비',
+      '목포 - 목포 세발낙지',
+      '여수 - 여수 서대회무침',
+      '순천 - 순천 짱뚱어탕',
+      '통영 - 통영 굴요리',
+      '진주 - 진주냉면',
+      '부산 - 부산 밀면 & 돼지국밥',
+      '마산(창원) - 마산 아귀찜',
+      '안동 - 안동 헛제사밥 & 안동찜닭',
+      '대구 - 대구 막창 & 따로국밥',
+      '포항 - 포항 물회',
+      '강릉 - 강릉 초당순두부',
+      '속초 - 속초 아바이순대',
+      '춘천 - 춘천 닭갈비',
+      '청주 - 청주 육거리시장 순대',
+      '제주 - 제주 흑돼지 & 고기국수',
+      '서울 - 서울 3대 냉면집 순례 (을지면옥·필동면옥·우래옥)'
+    ]},
+    { key: 'K', name: '꼭 가봐야 할 숙소', items: [
+      '경주 라궁 한옥호텔',
+      '안동 군자마을 고택 스테이',
+      '제주 신라호텔 오션뷰',
+      '제주 롯데호텔 제주',
+      '여수 경도 리조트',
+      '남해 사우스케이프 오너스클럽',
+      '강릉 세인트존스호텔',
+      '부산 파크하얏트',
+      '기장 아난티 코브',
+      '서울 신라호텔',
+      '전주 한옥마을 한옥스테이',
+      '통영 스탠포드호텔 앤리조트',
+      '태안 안면도 오션뷰 리조트',
+      '지리산 자락 산속 한옥스테이',
+      '울릉도 게스트하우스 체험'
+    ]},
+    { key: 'L', name: '자연휴양림에서 하룻밤', items: [
+      '축령산 자연휴양림(남양주) - 편백나무숲 산책',
+      '대관령 자연휴양림(평창)',
+      '유명산 자연휴양림(가평)',
+      '소백산 자연휴양림(단양)',
+      '회문산 자연휴양림(순창)',
+      '지리산 뱀사골 야영장에서 계곡 소리 들으며 하룻밤',
+      '변산반도 국립공원 자연휴양림',
+      '장성 편백숲 우드랜드(전남 장성)',
+      '오대산 국립공원 자연휴양림',
+      '방태산 자연휴양림(인제)',
+      '두타산 자연휴양림(동해)',
+      '내연산 자연휴양림(포항)',
+      '용대자연휴양림(인제, 설악산 인근)',
+      '칠보산 자연휴양림(괴산)',
+      '국립산림치유원(영주) 산림치유 프로그램 체험'
+    ]},
+    { key: 'M', name: '역사·문학의 발자취', items: [
+      '보길도 부용동 - 윤선도가 은거하며 <어부사시사>를 지은 곳',
+      '강진 다산초당 - 정약용이 유배 중 목민심서를 쓴 곳',
+      '남해 노도 - 서포 김만중이 <구운몽>을 쓴 유배지',
+      '안동 도산서원 - 퇴계 이황 학문의 터',
+      '해남 녹우당 + 고산윤선도유물전시관',
+      '강진 사의재 - 정약용 유배 초기 거처',
+      '부여 무량사 - 김시습이 은거했던 절',
+      '담양 소쇄원 - 양산보가 조성한 조선시대 별서정원',
+      '남원 광한루원 - 춘향전의 배경',
+      '통영 박경리기념관 - <토지> 작가의 고향',
+      '하동 평사리 최참판댁 - <토지>의 무대',
+      '정선 아라리촌 - 정선아리랑의 발상지',
+      '부여 낙화암 - 백제 역사의 현장',
+      '안동 퇴계 종택 및 예던길 걷기',
+      '경주 교촌마을 최부자댁 - 노블레스 오블리주의 상징'
+    ]},
+    { key: 'N', name: '국내 여행 (2박 이상)', items: [
+      '제주도 한 달 살기 체험',
+      '울릉도·독도 배 타고 여행',
+      '지리산 둘레길 3박4일 구간 완주',
+      '남해안 섬 여행 릴레이 (거제도→완도→진도)',
+      '전국 5대 궁궐 완주 여행 (서울 2박)',
+      '경주 신라왕경 역사기행 2박3일',
+      '안동·영주 유교문화권 답사 2박3일',
+      '부산-거제-통영 남해안 벨트 여행',
+      '설악산+동해안 강원도 여행',
+      '순천-여수-보성 남도 미식 여행',
+      '전주-군산-부안 서해안 여행',
+      '태백산-단양-영월 강원충북 접경 여행',
+      '완도-보길도 윤선도 발자취 여행 (2박)',
+      '울진-영덕 동해안 대게 여행',
+      '흑산도-홍도 서해 절경 여행'
+    ]},
+    { key: 'O', name: '해외 여행', items: [
+      '신혼여행지 다시 가보기',
+      '일본 온천 마을(하코네·유후인) 여행',
+      '유럽 크리스마스 마켓 여행 (독일·오스트리아)',
+      '동남아 휴양지 일주일 완전 휴식 여행',
+      '스페인 산티아고 순례길 일부 걷기',
+      '크루즈 여행 (일본 or 동남아 노선)',
+      '북유럽 오로라 여행',
+      '이탈리아 미식·미술 여행',
+      '대만 야시장·온천 여행',
+      '베트남 다낭·호이안 여행',
+      '그리스 산토리니 여행',
+      '하와이 휴양 여행',
+      '프랑스 파리 + 남부 와인지역 여행',
+      '튀르키예 카파도키아 열기구 여행',
+      '은퇴 기념 장기 세계여행 (3개월 이상)'
+    ]},
+    { key: 'P', name: '읽어야 할 책', items: [
+      '박경리 <토지>',
+      '박완서 <그 많던 싱아는 누가 다 먹었을까>',
+      '한강 <채식주의자>',
+      '김훈 <칼의 노래>',
+      '조정래 <태백산맥>',
+      '헤르만 헤세 <데미안>',
+      '생텍쥐페리 <어린왕자>',
+      '톨스토이 <안나 카레니나>',
+      '어니스트 헤밍웨이 <노인과 바다>',
+      '헨리 데이비드 소로우 <월든>',
+      '니코스 카잔차키스 <그리스인 조르바>',
+      '최인훈 <광장>',
+      '이문열 <삼국지> 완독 프로젝트',
+      '유시민 <어떻게 살 것인가>',
+      '법정 <무소유>',
+      '정약용 <목민심서> (현대어 번역본)',
+      '알랭 드 보통 <낭만적 연애와 그 후의 일상>',
+      '김영하 <살인자의 기억법>'
+    ]}
+  ];
+
+  var STORAGE_KEY = 'weekly-bucket-passport.v1';
+  var checkIcon = '<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.7L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return { done: {}, startDate: null, rerollOffset: {} };
+      var parsed = JSON.parse(raw);
+      return {
+        done: parsed.done || {},
+        startDate: parsed.startDate || null,
+        rerollOffset: parsed.rerollOffset || {}
+      };
+    } catch (e) {
+      return { done: {}, startDate: null, rerollOffset: {} };
+    }
+  }
+
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  var state = loadState();
+  if (!state.startDate) {
+    state.startDate = new Date().toISOString().slice(0, 10);
+  }
+
+  var sectionsEl = document.getElementById('sections');
+  var jumpnavEl = document.getElementById('jumpnav');
+  var startDateInput = document.getElementById('startDateInput');
+  startDateInput.value = state.startDate;
+
+  function itemId(catKey, idx) { return catKey + (idx + 1); }
+
+  function renderSections() {
+    sectionsEl.innerHTML = '';
+    jumpnavEl.innerHTML = '';
+    CATEGORIES.forEach(function (cat) {
+      var a = document.createElement('a');
+      a.href = '#section-' + cat.key;
+      a.textContent = cat.key;
+      jumpnavEl.appendChild(a);
+
+      var section = document.createElement('div');
+      section.className = 'page-section';
+      section.id = 'section-' + cat.key;
+
+      var doneCount = cat.items.filter(function (_, i) { return state.done[itemId(cat.key, i)]; }).length;
+
+      var head = document.createElement('div');
+      head.className = 'page-head';
+      head.innerHTML =
+        '<div class="page-letter">' + cat.key + '</div>' +
+        '<h2>' + cat.name + '</h2>' +
+        '<span class="page-count">' + doneCount + ' / ' + cat.items.length + '</span>';
+      section.appendChild(head);
+
+      var ul = document.createElement('ul');
+      ul.className = 'item-list';
+      cat.items.forEach(function (text, idx) {
+        var id = itemId(cat.key, idx);
+        var li = document.createElement('li');
+        li.className = 'item-row' + (state.done[id] ? ' done' : '');
+        li.innerHTML =
+          '<button type="button" class="stamp-check" data-id="' + id + '" aria-label="완료 표시">' + checkIcon + '</button>' +
+          '<span class="item-code">' + id + '</span>' +
+          '<span class="item-text">' + text + '</span>';
+        ul.appendChild(li);
+      });
+      section.appendChild(ul);
+      sectionsEl.appendChild(section);
+    });
+
+    sectionsEl.querySelectorAll('.stamp-check').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-id');
+        state.done[id] = !state.done[id];
+        saveState();
+        renderAll();
+      });
+    });
+  }
+
+  function totalCount() {
+    var total = 0;
+    CATEGORIES.forEach(function (c) { total += c.items.length; });
+    return total;
+  }
+
+  function doneTotal() {
+    return Object.keys(state.done).filter(function (k) { return state.done[k]; }).length;
+  }
+
+  function renderProgress() {
+    var total = totalCount();
+    var done = doneTotal();
+    document.getElementById('progressFill').style.width = (done / total * 100) + '%';
+    document.getElementById('progressCount').textContent = done + ' / ' + total;
+  }
+
+  function getWeekIndex() {
+    var start = new Date(state.startDate + 'T00:00:00');
+    var now = new Date();
+    var diffDays = Math.floor((now - start) / 86400000);
+    return Math.max(0, Math.floor(diffDays / 7));
+  }
+
+  function renderWeekCard() {
+    var weekIndex = getWeekIndex();
+    var cat = CATEGORIES[weekIndex % CATEGORIES.length];
+    var cycle = Math.floor(weekIndex / CATEGORIES.length);
+    var offset = state.rerollOffset[cat.key] || 0;
+    var itemIdx = (cycle + offset) % cat.items.length;
+    var id = itemId(cat.key, itemIdx);
+
+    document.getElementById('weekNumber').textContent = (weekIndex + 1) + '주차';
+    document.getElementById('weekCatTag').textContent = cat.key + ' · ' + cat.name;
+    document.getElementById('weekItemText').textContent = cat.items[itemIdx];
+
+    var doneBtn = document.getElementById('weekDoneBtn');
+    var isDone = !!state.done[id];
+    doneBtn.textContent = isDone ? '완료됨 ✓' : '이번 주 완료로 표시';
+    doneBtn.classList.toggle('done', isDone);
+
+    doneBtn.onclick = function () {
+      state.done[id] = !state.done[id];
+      saveState();
+      renderAll();
+      var target = document.querySelector('.stamp-check[data-id="' + id + '"]');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    document.getElementById('weekRerollBtn').onclick = function () {
+      state.rerollOffset[cat.key] = ((state.rerollOffset[cat.key] || 0) + 1) % cat.items.length;
+      saveState();
+      renderWeekCard();
+    };
+  }
+
+  function renderAll() {
+    renderSections();
+    renderWeekCard();
+    renderProgress();
+  }
+
+  startDateInput.addEventListener('change', function () {
+    if (startDateInput.value) {
+      state.startDate = startDateInput.value;
+      saveState();
+      renderAll();
+    }
+  });
+
+  renderAll();
+})();
+</script>
